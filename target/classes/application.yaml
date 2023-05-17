@@ -1,0 +1,14 @@
+server:
+  servlet:
+    context-path: ${SERVER_CONTEXT_PATH:/bookstore/v1}
+spring:
+  jpa:
+    database: ${SPRING_JPA_DATABASE:POSTGRESQL}
+    show-sql: ${SPRING_JPA_SHOW_SQL:true}
+    hibernate:
+      ddl-auto: ${SPRING_HIBERNATE_DDL_AUTO:none}
+  datasource:
+    platform: ${SPRING_DATASOURCE_PLATFORM:postgres}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/book}
+    username: ${SPRING_DATASOURCE_USERNAME:book}
+    password: ${SPRING_DATASOURCE_PASSWORD:book}

@@ -1,0 +1,41 @@
+version: '2.4'
+
+services:
+  database:
+    image: postgres:10.6-alpine
+    environment:
+      POSTGRES_USER: 'book'
+      POSTGRES_PASSWORD: 'book'
+    ports:
+      - '5432:5432'
+    expose:
+      - '5432'
+    volumes:
+      - ./docker/seed/postgresql:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "psql", "-d", "book", "-U", "book", "-c", "\\q"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+  flyway:
+    image: boxfuse/flyway:5.0.3
+    environment:
+      FLYWAY_USER: 'book'
+      FLYWAY_PASSWORD: 'book'
+      FLYWAY_URL: 'jdbc:postgresql://database:5432/book'
+    volumes:
+      - ../book-ddl/conf:/flyway/conf
+      - ../book-ddl/sql:/flyway/sql #mount | ../dcp is used to move back 2 folders
+    command: info migrate info
+    depends_on:
+      database:
+        condition: service_healthy
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5051:80"
